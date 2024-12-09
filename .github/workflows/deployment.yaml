@@ -67,7 +67,7 @@ jobs:
 
           registry: ghcr.io
 
-          username: "fioree25"
+          username: "Fioree25"
 
           password: ${{ secrets.PAT }}
 
