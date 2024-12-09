@@ -68,11 +68,11 @@ jobs:
 
           password: ${{ secrets.PAT }}
 
-    -  name: Build and push
+    - name: Build and push
 
-       uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v3
 
-       with:
+      with:
 
           context: .
 
@@ -80,4 +80,48 @@ jobs:
 
           tags: ghcr.io/fioree25/tos:latest
 
-  
+  deploy:
+
+    needs: verify-and-package
+
+    runs-on: ubuntu-latest
+
+    permissions:
+
+      contents: 'read'
+
+      id-token: 'write'
+
+    steps:
+
+    - uses: actions/checkout@v3
+
+    - id: 'auth'
+
+      uses: 'google-github-actions/auth@v1'
+
+      with:
+
+        credentials_json: '${{ secrets.GCLOUD_SA }}'
+
+    - id: 'get-credentials'
+
+      uses: 'google-github-actions/get-gke-credentials@v1'
+
+      with:
+
+        cluster_name: 'apsv-24'
+
+        location: 'us-central1'
+
+    # The KUBECONFIG env var is automatically exported and picked up by kubectl.
+
+    - id: 'deployment-mypod'
+
+      run: 'kubectl create secret docker-registry github-registry --docker-server="ghcr.io" --docker-username="fioree25" --docker-password="${{ secrets.PAT }}" --docker-email="fioree_25@hotmail.com" -o yaml --dry-run=client | kubectl apply -f -'
+
+    - run: 'kubectl apply -f deployment.yaml'
+
+    - run: 'kubectl get deployments'
+
+    - run: 'kubectl get pods'
