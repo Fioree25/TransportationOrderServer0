@@ -56,9 +56,7 @@ jobs:
 
       run: mvn -B verify --file pom.xml
             
-      -
-
-        name: Login to GHCR.IO
+    - name: Login to GHCR.IO
 
         uses: docker/login-action@v2
 
