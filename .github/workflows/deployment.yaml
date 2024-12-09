@@ -55,8 +55,7 @@ jobs:
     - name: Run all defined tests and generate war with Maven
 
       run: mvn -B verify --file pom.xml
-      
-      run: ls ${GITHUB_WORKSPACE}/target/*.jar
+            
       -
 
         name: Login to GHCR.IO
